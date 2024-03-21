@@ -39,6 +39,12 @@ public class Player : MonoBehaviour
     // private bool canGrabLedge = true;
     // private bool canClimb;
 
+    [Header("Lading Infor")]
+    [SerializeField] private float defaultGravity;
+    [SerializeField] private float landingGravity;
+    [SerializeField] private float heightToLanding;
+
+
     [Header("Collision Infor")]
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private float groundDistance;
@@ -59,6 +65,8 @@ public class Player : MonoBehaviour
         speedMilestone = milestoneIncrease;
         defaultSpeed = moveSpeed;
         defaultMilestoneIncrease = milestoneIncrease;
+
+        rb.gravityScale = defaultGravity;
     }
     void Update()
     {
@@ -75,9 +83,12 @@ public class Player : MonoBehaviour
         //CheckForLedge();
         CheckInput();
         SlideCheck();
+        Landing();
 
-        if(isGrounded)
-            canDoubleJump = true;
+        if(isGrounded){
+            canDoubleJump = true; 
+            rb.gravityScale = defaultGravity;
+        }
     }
 
 #region SpeedControl
@@ -137,6 +148,13 @@ public class Player : MonoBehaviour
             Debug.Log("Double Jump");
             canDoubleJump = false;
             rb.velocity = new Vector2(rb.velocity.x, doubleJumpForce);
+        }
+    }
+
+    private void Landing(){
+        if(transform.position.y > heightToLanding){
+            if(Input.GetKeyDown(KeyCode.S))
+                rb.gravityScale = landingGravity;
         }
     }
 
