@@ -784,15 +784,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 1801010253}
   anim: {fileID: 1801010257}
+  maxSpeed: 20
+  speedMultipler: 1.15
+  defaultSpeed: 0
+  milestoneIncrease: 50
   moveSpeed: 10
   jumpForce: 18
   doubleJumpForce: 13
   slideSpeed: 20
   slideTime: 0.4
   slideCooldown: 1
-  ledgeDetected: 0
-  offset1: {x: -0.62, y: -1.28}
-  offset2: {x: 0.68, y: 1.286}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
@@ -832,13 +833,14 @@ GameObject:
   - component: {fileID: 1942539557}
   - component: {fileID: 1942539559}
   - component: {fileID: 1942539558}
+  - component: {fileID: 1942539560}
   m_Layer: 0
   m_Name: LedgeCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1942539557
 Transform:
   m_ObjectHideFlags: 0
@@ -886,7 +888,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.142791}
+  m_Offset: {x: 0.18357909, y: 0.142791}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -897,7 +899,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.4922986, y: 0.33364183}
+  m_Size: {x: 0.8594568, y: 0.33364183}
   m_EdgeRadius: 0
 --- !u!114 &1942539559
 MonoBehaviour:
@@ -917,6 +919,33 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   canDetected: 0
+--- !u!50 &1942539560
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942539556}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 0
 --- !u!1001 &917252712348957591
 PrefabInstance:
   m_ObjectHideFlags: 0

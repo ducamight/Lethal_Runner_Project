@@ -5,6 +5,16 @@ public class Player : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator anim;
 
+
+    [Header("Speed Infor")]
+    [SerializeField] private float maxSpeed;
+    [SerializeField] private float speedMultipler;
+    [SerializeField] private float defaultSpeed;
+    [Space]
+    [SerializeField] private float milestoneIncrease;
+    private float defaultMilestoneIncrease;
+    private float speedMilestone;
+
     [Header("Movement Infor")]
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpForce;
@@ -20,14 +30,14 @@ public class Player : MonoBehaviour
     private float slideCooldownCounter;
     private bool isSliding;
 
-    [Header("Ledge Info")]
-    public bool ledgeDetected;
-    [SerializeField] private Vector2 offset1;
-    [SerializeField] private Vector2 offset2;
-    private Vector2 climbBegunPosition;
-    private Vector2 climbOverPosition;
-    private bool canGrabLedge = true;
-    private bool canClimb;
+    // [Header("Ledge Info")]
+    // public bool ledgeDetected;
+    // [SerializeField] private Vector2 offset1;
+    // [SerializeField] private Vector2 offset2;
+    // private Vector2 climbBegunPosition;
+    // private Vector2 climbOverPosition;
+    // private bool canGrabLedge = true;
+    // private bool canClimb;
 
     [Header("Collision Infor")]
     [SerializeField] private LayerMask whatIsGround;
@@ -45,6 +55,10 @@ public class Player : MonoBehaviour
     {
         rb = rb.GetComponent<Rigidbody2D>();
         anim = anim.GetComponent<Animator>();
+
+        speedMilestone = milestoneIncrease;
+        defaultSpeed = moveSpeed;
+        defaultMilestoneIncrease = milestoneIncrease;
     }
     void Update()
     {
@@ -57,7 +71,8 @@ public class Player : MonoBehaviour
         if(playerUnlocked)
             Movement();
 
-        CheckForLedge();
+        SpeedController();
+        //CheckForLedge();
         CheckInput();
         SlideCheck();
 
@@ -65,22 +80,46 @@ public class Player : MonoBehaviour
             canDoubleJump = true;
     }
 
-    
+#region SpeedControl
+    private void SpeedReset(){
+        moveSpeed = defaultSpeed;
+        milestoneIncrease = defaultMilestoneIncrease;   
+    }
+    private void SpeedController(){
+    if(moveSpeed == maxSpeed)
+            return;
+        
+    if(transform.position.x > speedMilestone){
+            speedMilestone += milestoneIncrease;
+            moveSpeed *= speedMultipler;
+            milestoneIncrease *= speedMultipler;
+
+        if(moveSpeed > maxSpeed)
+                moveSpeed = maxSpeed;
+        }
+    }
+    #endregion
     
 
+#region AnimatorController
     private void AnimatorController(){
         anim.SetBool("canDoubleJump", canDoubleJump);
         anim.SetBool("isGrounded", isGrounded);
         anim.SetFloat("xVelocity", rb.velocity.x);
         anim.SetFloat("yVelocity", rb.velocity.y);
         anim.SetBool("isSliding", isSliding);
-        anim.SetBool("canClimp", canClimb);
+        //anim.SetBool("canClimp", canClimb);
     }
+#endregion
+    
 
+#region Movement
     //MOVEMENT
     private void Movement(){
-        if(wallCheckDetected)
+        if(wallCheckDetected){
+            SpeedReset();
             return;
+        }
         if(isSliding)
             rb.velocity = new Vector2(slideSpeed, rb.velocity.y);
         else
@@ -109,7 +148,14 @@ public class Player : MonoBehaviour
             slideCooldownCounter = slideCooldown;
         }
     }
-
+    // private void LedgeClimbOver(){
+    //     canClimb = false;
+    //     transform.position = climbOverPosition;
+    //     Invoke("AllowLedgeGrab", .1f);
+    // }
+    // private void AllowLedgeGrab() => canGrabLedge = true;
+#endregion
+    
 
     //CHECK
     private void CheckInput(){
@@ -129,17 +175,17 @@ public class Player : MonoBehaviour
         ceillingDetected = Physics2D.Raycast(transform.position, Vector2.up, ceillingCheckDistance, whatIsGround);
         wallCheckDetected = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector2.zero, 0, whatIsGround);
     }
-    private void CheckForLedge(){
-        if(ledgeDetected && canGrabLedge){
-            canGrabLedge = false;
-            Vector2 ledgePosition = GetComponentInChildren<LedgeDetection>().transform.position;
-            climbBegunPosition = ledgePosition + offset1;
-            climbOverPosition = ledgePosition + offset2;
-            canClimb = true;
-        }if(canClimb){
-            transform.position = climbBegunPosition;
-        }
-    }
+    // private void CheckForLedge(){
+    //     if(ledgeDetected && canGrabLedge){
+    //         canGrabLedge = false;
+    //         Vector2 ledgePosition = GetComponentInChildren<LedgeDetection>().transform.position;
+    //         climbBegunPosition = ledgePosition + offset1;
+    //         climbOverPosition = ledgePosition + offset2;
+    //         canClimb = true;
+    //     }if(canClimb){
+    //         transform.position = climbBegunPosition;
+    //     }
+    // }
 
     //GIZMOS
     private void OnDrawGizmos() {
