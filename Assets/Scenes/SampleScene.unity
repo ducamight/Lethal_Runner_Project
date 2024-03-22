@@ -286,7 +286,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.227778, y: 3.1999998, z: -10}
+  m_LocalPosition: {x: 11.227778, y: 1.6000004, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -507,7 +507,7 @@ MonoBehaviour:
     FocusDistance: 10
     m_SensorSize: {x: 1, y: 1}
   m_Transitions:
-    m_BlendHint: 0
+    m_BlendHint: 3
     m_InheritPosition: 0
     m_OnCameraLive:
       m_PersistentCalls:
@@ -523,7 +523,7 @@ Transform:
   m_GameObject: {fileID: 833773494}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.227778, y: 3.1999998, z: -10}
+  m_LocalPosition: {x: 11.227778, y: 1.6000004, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -580,19 +580,19 @@ MonoBehaviour:
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
   m_XDamping: 1
-  m_YDamping: 6
+  m_YDamping: 1
   m_ZDamping: 1
-  m_TargetMovementOnly: 1
+  m_TargetMovementOnly: 0
   m_ScreenX: 0.1
-  m_ScreenY: 0.7
+  m_ScreenY: 0.6
   m_CameraDistance: 10
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
   m_DeadZoneDepth: 0
-  m_UnlimitedSoftZone: 1
-  m_SoftZoneWidth: 0.2
-  m_SoftZoneHeight: 0.45
-  m_BiasX: -0.28
+  m_UnlimitedSoftZone: 0
+  m_SoftZoneWidth: 0.15
+  m_SoftZoneHeight: 0.31
+  m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
   m_GroupFramingMode: 2
@@ -789,14 +789,14 @@ MonoBehaviour:
   defaultSpeed: 0
   milestoneIncrease: 50
   moveSpeed: 10
+  speedUpSpeed: 20
   jumpForce: 18
   doubleJumpForce: 13
-  slideSpeed: 20
   slideTime: 0.4
   slideCooldown: 1
   defaultGravity: 5
   landingGravity: 50
-  heightToLanding: 2
+  heightToLanding: 0
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64

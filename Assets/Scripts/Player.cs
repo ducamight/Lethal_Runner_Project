@@ -17,13 +17,14 @@ public class Player : MonoBehaviour
 
     [Header("Movement Infor")]
     [SerializeField] private float moveSpeed;
+    [SerializeField] private float speedUpSpeed;
     [SerializeField] private float jumpForce;
     [SerializeField] private float doubleJumpForce;
     private bool playerUnlocked;
     private bool canDoubleJump;
 
     [Header("Slide Infor")]
-    [SerializeField] private float slideSpeed;
+    //[SerializeField] private float slideSpeed;
     [SerializeField] private float slideTime;
     [SerializeField] private float slideCooldown;
     private float slideTimeCounter;
@@ -97,19 +98,23 @@ public class Player : MonoBehaviour
         milestoneIncrease = defaultMilestoneIncrease;   
     }
     private void SpeedController(){
-    if(moveSpeed == maxSpeed)
+        if(moveSpeed == maxSpeed)
             return;
         
-    if(transform.position.x > speedMilestone){
+        if(transform.position.x > speedMilestone){
             speedMilestone += milestoneIncrease;
             moveSpeed *= speedMultipler;
             milestoneIncrease *= speedMultipler;
 
-        if(moveSpeed > maxSpeed)
-                moveSpeed = maxSpeed;
+            if(moveSpeed > maxSpeed)
+                    moveSpeed = maxSpeed;
         }
-    }
-    #endregion
+        if(Input.GetKeyDown(KeyCode.D))
+            moveSpeed += speedUpSpeed;
+        else if(Input.GetKeyUp(KeyCode.D))
+            moveSpeed -= speedUpSpeed;
+    }    
+#endregion
     
 
 #region AnimatorController
@@ -132,7 +137,7 @@ public class Player : MonoBehaviour
             return;
         }
         if(isSliding)
-            rb.velocity = new Vector2(slideSpeed, rb.velocity.y);
+            rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
         else
             rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
     }
