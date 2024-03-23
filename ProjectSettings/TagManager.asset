@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Coin
   layers:
   - Default
   - TransparentFX
@@ -43,6 +44,9 @@ TagManager:
     locked: 0
   - name: Ground
     uniqueID: 3864396701
+    locked: 0
+  - name: Coin
+    uniqueID: 31807139
     locked: 0
   - name: Player
     uniqueID: 2207774105
