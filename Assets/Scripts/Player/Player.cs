@@ -1,10 +1,10 @@
+using System.Collections;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator anim;
-
 
     [Header("Speed Infor")]
     [SerializeField] private float maxSpeed;
@@ -45,6 +45,10 @@ public class Player : MonoBehaviour
     [SerializeField] private float landingGravity;
     [SerializeField] private float heightToLanding;
 
+    [Header("Knockback Infor")]
+    [SerializeField] private Vector2 knockbackDirection;
+    private bool isKnocked; 
+
 
     [Header("Collision Infor")]
     [SerializeField] private LayerMask whatIsGround;
@@ -57,7 +61,7 @@ public class Player : MonoBehaviour
     private bool isGrounded;
     private bool isRunning;
     private bool ceillingDetected;
-
+    private bool isDead; 
     void Start()
     {
         rb = rb.GetComponent<Rigidbody2D>();
@@ -77,6 +81,12 @@ public class Player : MonoBehaviour
         slideTimeCounter -= Time.deltaTime;
         slideCooldownCounter -= Time.deltaTime;
 
+        if(isDead)
+            return;
+
+        if(isKnocked)
+            return;
+            
         if(playerUnlocked)
             Movement();
 
@@ -102,12 +112,12 @@ public class Player : MonoBehaviour
             return;
         
         if(transform.position.x > speedMilestone){
-            speedMilestone += milestoneIncrease;
-            moveSpeed *= speedMultipler;
-            milestoneIncrease *= speedMultipler;
+            speedMilestone = speedMilestone + milestoneIncrease;
+            moveSpeed = moveSpeed * speedMultipler;
+            milestoneIncrease = milestoneIncrease * speedMultipler;
 
             if(moveSpeed > maxSpeed)
-                    moveSpeed = maxSpeed;
+                moveSpeed = maxSpeed;
         }
         if(Input.GetKeyDown(KeyCode.D))
             moveSpeed += speedUpSpeed;
@@ -124,8 +134,13 @@ public class Player : MonoBehaviour
         anim.SetFloat("xVelocity", rb.velocity.x);
         anim.SetFloat("yVelocity", rb.velocity.y);
         anim.SetBool("isSliding", isSliding);
+        anim.SetBool("isKnocked", isKnocked);
         //anim.SetBool("canClimp", canClimb);
+
+        if(rb.velocity.y < -20)
+            anim.SetBool("canRoll", true);
     }
+    
 #endregion
     
 
@@ -136,10 +151,11 @@ public class Player : MonoBehaviour
             SpeedReset();
             return;
         }
-        if(isSliding)
-            rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
-        else
-            rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
+        
+        //if(isSliding)
+        rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
+        // else
+        //     rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
     }
 
     private void Jump(){
@@ -179,15 +195,42 @@ public class Player : MonoBehaviour
     // private void AllowLedgeGrab() => canGrabLedge = true;
 #endregion
     
+    //Roll
+    private void RollFinished()=>anim.SetBool("canRoll", false);
+
+    //Knockback
+    private void Knockback(){
+        isKnocked = true;
+        rb.velocity = knockbackDirection;
+    }
+    private void CancleKnockback() => isKnocked = false;
+
+    private IEnumerator Die(){
+        isDead = true;
+        rb.velocity = knockbackDirection;
+        anim.SetBool("isDead", true);
+        yield return new WaitForSeconds(1f);
+        rb.velocity = new Vector2(0, 0);
+    }
+    public void Damage(){
+        if(moveSpeed >= maxSpeed)
+            Knockback();
+        else
+            StartCoroutine(Die());
+    }
 
     //CHECK
     private void CheckInput(){
-        if(Input.GetMouseButtonDown(0)){
+        if(Input.GetMouseButtonDown(0))
             playerUnlocked = true;
-        }if(Input.GetKeyDown(KeyCode.Space)){
+        if(Input.GetKeyDown(KeyCode.Space))
             Jump();
-        }if(Input.GetKeyDown(KeyCode.LeftShift))
+        if(Input.GetKeyDown(KeyCode.LeftShift))
             Slide();
+        if(Input.GetKeyDown(KeyCode.K))
+            Knockback();
+        if(Input.GetKeyDown(KeyCode.J) && !isDead)
+            StartCoroutine(Die());
     }
     private void SlideCheck(){
         if(slideTimeCounter < 0 && !ceillingDetected)
