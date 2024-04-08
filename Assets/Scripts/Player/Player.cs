@@ -24,21 +24,14 @@ public class Player : MonoBehaviour
     private bool canDoubleJump;
 
     [Header("Slide Infor")]
-    //[SerializeField] private float slideSpeed;
+    [SerializeField] private float slideSpeed;
     [SerializeField] private float slideTime;
     [SerializeField] private float slideCooldown;
+    [SerializeField] private float maxSlideSpeed;
     private float slideTimeCounter;
     private float slideCooldownCounter;
     private bool isSliding;
 
-    // [Header("Ledge Info")]
-    // public bool ledgeDetected;
-    // [SerializeField] private Vector2 offset1;
-    // [SerializeField] private Vector2 offset2;
-    // private Vector2 climbBegunPosition;
-    // private Vector2 climbOverPosition;
-    // private bool canGrabLedge = true;
-    // private bool canClimb;
 
     [Header("Lading Infor")]
     [SerializeField] private float defaultGravity;
@@ -114,10 +107,13 @@ public class Player : MonoBehaviour
         if(transform.position.x > speedMilestone){
             speedMilestone = speedMilestone + milestoneIncrease;
             moveSpeed = moveSpeed * speedMultipler;
+            slideSpeed = slideSpeed * speedMultipler;
             milestoneIncrease = milestoneIncrease * speedMultipler;
 
             if(moveSpeed > maxSpeed)
                 moveSpeed = maxSpeed;
+            if(slideSpeed > maxSlideSpeed)
+                slideSpeed = maxSlideSpeed;
         }
         if(Input.GetKeyDown(KeyCode.D))
             moveSpeed += speedUpSpeed;
@@ -143,7 +139,11 @@ public class Player : MonoBehaviour
     
 #endregion
     
-
+private void OnTriggerEnter2D(Collider2D other) {
+    if(other.CompareTag("WeakPoint")){
+        Destroy(other.gameObject);
+    }
+}
 #region Movement
     //MOVEMENT
     private void Movement(){
@@ -152,10 +152,10 @@ public class Player : MonoBehaviour
             return;
         }
         
-        //if(isSliding)
-        rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
-        // else
-        //     rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
+        if(isSliding)
+            rb.velocity = new Vector2(slideSpeed, rb.velocity.y);
+        else
+            rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
     }
 
     private void Jump(){
@@ -187,12 +187,6 @@ public class Player : MonoBehaviour
             slideCooldownCounter = slideCooldown;
         }
     }
-    // private void LedgeClimbOver(){
-    //     canClimb = false;
-    //     transform.position = climbOverPosition;
-    //     Invoke("AllowLedgeGrab", .1f);
-    // }
-    // private void AllowLedgeGrab() => canGrabLedge = true;
 #endregion
     
     //Roll
@@ -243,18 +237,6 @@ public class Player : MonoBehaviour
         ceillingDetected = Physics2D.Raycast(transform.position, Vector2.up, ceillingCheckDistance, whatIsGround);
         wallCheckDetected = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector2.zero, 0, whatIsGround);
     }
-    // private void CheckForLedge(){
-    //     if(ledgeDetected && canGrabLedge){
-    //         canGrabLedge = false;
-    //         Vector2 ledgePosition = GetComponentInChildren<LedgeDetection>().transform.position;
-    //         climbBegunPosition = ledgePosition + offset1;
-    //         climbOverPosition = ledgePosition + offset2;
-    //         canClimb = true;
-    //     }if(canClimb){
-    //         transform.position = climbBegunPosition;
-    //     }
-    // }
-
     //GIZMOS
     private void OnDrawGizmos() {
         Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - groundDistance));
